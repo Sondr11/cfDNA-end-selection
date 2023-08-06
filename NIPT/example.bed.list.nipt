@@ -1,0 +1,7 @@
+s1	/path/to/s1.bed.gz	control
+s2	/path/to/s2.bed.gz	control
+s3	/path/to/s3.bed.gz	control
+s4	/path/to/s4.bed.gz	control
+s5	/path/to/s5.bed.gz	testing
+s6	/path/to/s6.bed.gz	testing
+s7	/path/to/s7.bed.gz	testing

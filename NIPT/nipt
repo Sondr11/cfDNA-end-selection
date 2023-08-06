@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+# Author: Kun Sun @ SZBL (sunkun@szbl.ac.cn)
+# Date  :
+#
+set -o nounset
+set -o errexit
+#command || { echo "command failed"; exit 1; }
+
+if [ $# -lt 2 ]
+then
+	echo "Usage: $0 <nucleosome.track.bed[.gz]> <bed.list>"
+	echo
+	echo -e "\e[32mWritten by Kun Sun (sunkun@szbl.ac.cn). (c) Shenzhen Bay Laboratory.\e[0m"
+	echo
+	echo "The \"bed.list\" file should contains 3 columns: sid /path/to/bed[.gz] category"
+	echo "The bed files could be gzipped, but must be Single-End data"
+	echo "The category should be either \"control\" or \"testing\" for all samples"
+	exit 2
+fi > /dev/stderr
+
+currSHELL=`readlink -f $0`
+PRG=`dirname $currSHELL`
+
+NUCTRACK=$1
+bedlist=$2
+
+rm -f chr.cnt.standard chr.cnt.end.selection
+while read sid bed category
+do
+	perl $PRG/count.chr.pl $bed $sid >>chr.cnt.standard
+
+	perl $PRG/se_bed2end.pl $bed | sort -k1,1 -k2,2n | \
+	$PRG/bedtools intersect -a - -b $NUCTRACK -u -sorted | \
+	perl $PRG/count.chr.pl - $sid >>chr.cnt.end.selection
+done < $bedlist
+
+perl $PRG/calc.Z-score.pl $bedlist chr.cnt.standard      >Z-score.standard
+perl $PRG/calc.Z-score.pl $bedlist chr.cnt.end.selection >Z-score.with.end.selection 
+
