@@ -4,19 +4,20 @@ This repository contains the scripts and related files for Ju et al.
 Distributed under the [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/ "CC BY-NC-ND")
 license for **personal and academic usage only**.
 
-## Annotation files under `anno` directory
-Note that all the annotation files we provided are built for NCBI GRCh38 (hg38) reference genome.
-1. `hg38.info`: chromosome size information for hg38 genome;
-2. `hsNuc0390101.DANPOSPeak.sorted.bed.gz` and `hsNuc0260501.DANPOSPeak.sorted.bed.gz`:
-nucleosome tracks for GM12878 and K562 cell lines, respectively. The raw data was downlaoded from NucMap:
-[hsNuc0390101](https://download.cncb.ac.cn/nucmap/organisms/v1/Homo_sapiens/byDataType/Nucleosome_peaks_DANPOS/Homo_sapiens.hsNuc0390101.nucleosome.DANPOSPeak.bed.gz), and
-[hsNuc0260501](https://download.cncb.ac.cn/nucmap/organisms/v1/Homo_sapiens/byDataType/Nucleosome_peaks_DANPOS/Homo_sapiens.hsNuc0260501.nucleosome.DANPOSPeak.bed.gz).
-We sorted the data using the following commands:
+## Required annotation files
+Note that all the annotation files should be built for NCBI GRCh38 (hg38) reference genome.
+1. Chromosome size information, we had provided a `hg38.info` under `anno` directory;
+2. Nucleosome tracks. The files are too big to be uploaded to GitHub, so the users need to build these files themselves
+using the following commands:
 ```
+wget https://download.cncb.ac.cn/nucmap/organisms/v1/Homo_sapiens/byDataType/Nucleosome_peaks_DANPOS/Homo_sapiens.hsNuc0390101.nucleosome.DANPOSPeak.bed.gz
 zcat Homo_sapiens.hsNuc0390101.nucleosome.DANPOSPeak.bed.gz | perl -lane '$c=($F[1]+$F[2])>>1; print join("\t", $F[0], $c-73, $c+1+73, $F[3])' | sort -k1,1 -k2,2n | gzip >hsNuc0390101.DANPOSPeak.sorted.bed.gz
+
+wget https://download.cncb.ac.cn/nucmap/organisms/v1/Homo_sapiens/byDataType/Nucleosome_peaks_DANPOS/Homo_sapiens.hsNuc0260501.nucleosome.DANPOSPeak.bed.gz
 zcat Homo_sapiens.hsNuc0260501.nucleosome.DANPOSPeak.bed.gz | perl -lane '$c=($F[1]+$F[2])>>1; print join("\t", $F[0], $c-73, $c+1+73, $F[3])' | sort -k1,1 -k2,2n | gzip >hsNuc0260501.DANPOSPeak.sorted.bed.gz
 ```
-These two files could be directly used as nputs for the following scripts.
+The files generated from these codes (`hsNuc0390101.DANPOSPeak.sorted.bed.gz` for GM12878 cell line,
+and `hsNuc0260501.DANPOSPeak.sorted.bed.gz` for K562 cell line) could be directly used as inputs for the following scripts.
 
 ## Noninvasive prenatal testing scripts under `NIPT` directory
 The main program is `nipt`. You can run it without parameters to see the usage:
